@@ -71,7 +71,7 @@ func CreateBloomFilter() {
 		dataset_notexists[u.String()] = false
 	}
 
-	for j := 100; j < 30000; j += 100 {
+	for j := 100; j < 30000; j += 1000 {
 
 		bloom := NewBloomFilter(int32(j))
 
@@ -101,7 +101,8 @@ func CreateBloomFilter() {
 			}
 		}
 
-		fmt.Println(float64(falsePositives) / float64(len(dataset)))
+		fmt.Println("size: ", j, "fp_rate: ", float64(falsePositives)/float64(len(dataset)),
+			"fp_rate_perc: ", 100*float64(falsePositives)/float64(len(dataset)))
 		// fmt.Println(100 * (float64(falsePositives) / float64(len(dataset))))
 	}
 
