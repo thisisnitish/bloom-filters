@@ -105,20 +105,4 @@ func CreateBloomFilter() {
 			"fp_rate_perc: ", 100*float64(falsePositives)/float64(len(dataset)))
 		// fmt.Println(100 * (float64(falsePositives) / float64(len(dataset))))
 	}
-
-	// keys := []string{"a", "b", "c", "d"}
-	// keys := []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"}
-
-	// for _, key := range keys {
-	// 	bloom.Add(key)
-	// }
-
-	// for _, key := range keys {
-	// 	fmt.Println(bloom.Exists(key))
-	// }
-
-	// fmt.Println(bloom.Exists("e"))
-	// fmt.Println(bloom.Exists("f"))
-	// fmt.Println(bloom.Exists("g"))
-	// fmt.Println(bloom.Exists("h"))
 }
