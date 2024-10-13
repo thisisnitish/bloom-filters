@@ -94,3 +94,7 @@ number of hash functions:  20 fp_rate:  0.001 fp_rate_perc:  0.1
 ```
 
 ![Number of hash function vs False Positivity Rate](./assets/fpr_vs_hashfns.png)
+
+## License
+
+bloom-filters is open sourced under [Apache-2.0 License](./LICENSE)
