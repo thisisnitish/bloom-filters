@@ -55,3 +55,42 @@ size:  29100 fp_rate:  0.005 fp_rate_perc:  0.5
 ```
 
 ![Bloom Filter Size vs False Positivity Rate ](./assets/bloom_filter_vs_fpr.png)
+
+### Space Optimisations
+
+Here, we changed the bool array to byte array and used bitwise operation to set the bit and
+check the bit.
+
+### Number of Hash Functions vs False Positivity Rate
+
+We checked the bloom filers with number of hash functions, say 20 hash functions on bloom filter
+with size 10k. As you can see from the graph, as the number of hash functions increases, the
+false postive have some value then it decreases to 0 and after sometime it increases.
+
+Hence, having large number of hash functions is good but having too many hash functions will make your
+program slower and after sometime you would see increase in false positivity rate.
+
+```
+number of hash functions:  1 fp_rate:  0.031 fp_rate_perc:  3.1
+number of hash functions:  2 fp_rate:  0.004 fp_rate_perc:  0.4
+number of hash functions:  3 fp_rate:  0.002 fp_rate_perc:  0.2
+number of hash functions:  4 fp_rate:  0.002 fp_rate_perc:  0.2
+number of hash functions:  5 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  6 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  7 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  8 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  9 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  10 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  11 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  12 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  13 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  14 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  15 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  16 fp_rate:  0 fp_rate_perc:  0
+number of hash functions:  17 fp_rate:  0.001 fp_rate_perc:  0.1
+number of hash functions:  18 fp_rate:  0.001 fp_rate_perc:  0.1
+number of hash functions:  19 fp_rate:  0.001 fp_rate_perc:  0.1
+number of hash functions:  20 fp_rate:  0.001 fp_rate_perc:  0.1
+```
+
+![Number of hash function vs False Positivity Rate](./assets/fpr_vs_hashfns.png)

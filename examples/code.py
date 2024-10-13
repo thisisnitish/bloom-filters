@@ -15,3 +15,29 @@ plt.xlabel('size of bloom filters')
 plt.ylabel('fp rate')
 plt.legend(['fp rate'])
 plt.show()
+
+
+"""
+This is the code of Number of Hash Functions vs False Positive Rate
+which produces a chart which you can see in README.md
+"""
+
+import matplotlib.pyplot as plt
+import math
+x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+y = [3.1,0.4,0.2,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.1,0.1,0.1]
+plt.plot(
+    x, y,
+    marker='o'
+)
+
+new_list = range(math.floor(min(y)), math.ceil(max(y))+1)
+# new_x = range(math.floor(min(x)), math.ceil(max(x))+1)
+# plt.xticks(new_x)
+plt.yticks(new_list)
+plt.grid(True)
+plt.title('fp rate vs number of hash functions')
+plt.xlabel('number of hash functions')
+plt.ylabel('fp rate')
+plt.legend(['fp rate'])
+plt.show()

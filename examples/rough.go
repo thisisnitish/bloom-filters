@@ -1,33 +1,38 @@
+/*
+This is the first implementation of the bloom filter aka bloom filters size vs fpr.
+I've kept this here for references in future. It has nothing to do this with the current code
+we have in main file.
+You can ignore this.
+
+Test from 100 to 10k with 100 over step each for this usecase.
+*/
+
 package bloom
 
 import (
 	"fmt"
 	"hash"
-	"math/rand"
 
 	"github.com/google/uuid"
 	"github.com/spaolacci/murmur3"
 )
 
 type BloomFilter struct {
-	filter []uint8
+	filter []bool // TODO: Optimise this
 	size   int32
 }
 
-var hashFns []hash.Hash32
+var mHasher hash.Hash32
 
 func init() {
 	// mHasher = murmur3.New32WithSeed(uint32(time.Now().Unix()))
-	hashFns = make([]hash.Hash32, 0)
-	for i := 0; i < 20; i++ {
-		hashFns = append(hashFns, murmur3.New32WithSeed(rand.Uint32()))
-	}
+	mHasher = murmur3.New32WithSeed(uint32(11))
 }
 
-func murmurHash(key string, size int32, hashFnIdx int) int32 {
-	hashFns[hashFnIdx].Write([]byte(key))
-	var result = hashFns[hashFnIdx].Sum32() % uint32(size)
-	hashFns[hashFnIdx].Reset()
+func murmurHash(key string, size int32) int32 {
+	mHasher.Write([]byte(key))
+	var result = mHasher.Sum32() % uint32(size)
+	mHasher.Reset()
 
 	return int32(result)
 }
@@ -35,19 +40,14 @@ func murmurHash(key string, size int32, hashFnIdx int) int32 {
 // Initialise the bloom filter
 func NewBloomFilter(size int32) *BloomFilter {
 	return &BloomFilter{
-		filter: make([]uint8, size),
+		filter: make([]bool, size),
 		size:   size,
 	}
 }
 
-func (bf *BloomFilter) Add(key string, numHashFuns int) {
-	for i := 0; i < numHashFuns; i++ {
-
-		idx := murmurHash(key, bf.size, i)
-		arrayIdx := idx / 8
-		bitIdx := idx % 8
-		bf.filter[arrayIdx] = bf.filter[arrayIdx] | (1 << bitIdx)
-	}
+func (bf *BloomFilter) Add(key string) {
+	idx := murmurHash(key, bf.size)
+	bf.filter[idx] = true
 
 	// fmt.Println("wrote ", key, " at ", idx)
 }
@@ -56,20 +56,9 @@ func (bf *BloomFilter) Print() {
 	fmt.Println(bf.filter)
 }
 
-func (bf *BloomFilter) Exists(key string, numHashFuns int) (string, int32, bool) {
-	for i := 0; i < numHashFuns; i++ {
-
-		idx := murmurHash(key, bf.size, i)
-		arrayIdx := idx / 8
-		bitIdx := idx % 8
-		exist := bf.filter[arrayIdx]&(1<<bitIdx) > 0
-
-		if !exist {
-			return key, idx, false
-		}
-	}
-
-	return key, 0, true
+func (bf *BloomFilter) Exists(key string) (string, int32, bool) {
+	idx := murmurHash(key, bf.size)
+	return key, idx, bf.filter[idx]
 }
 
 // create the bloom filter
@@ -91,19 +80,19 @@ func CreateBloomFilter() {
 		dataset_notexists[u.String()] = false
 	}
 
-	for j := 1; j <= len(hashFns); j++ {
+	for j := 100; j < 30000; j += 1000 {
 
-		bloom := NewBloomFilter(int32(10000))
+		bloom := NewBloomFilter(int32(j))
 
 		// Insert the key in bloom filter
 		for key, _ := range dataset_exists {
-			bloom.Add(key, j)
+			bloom.Add(key)
 		}
 
 		falsePositives := 0
 		// truePositives := 0
 		for _, key := range dataset {
-			_, _, exists := bloom.Exists(key, j)
+			_, _, exists := bloom.Exists(key)
 
 			// if key exists
 			if exists {
@@ -121,7 +110,7 @@ func CreateBloomFilter() {
 			}
 		}
 
-		fmt.Println("number of hash functions: ", j, "fp_rate: ", float64(falsePositives)/float64(len(dataset)),
+		fmt.Println("size: ", j, "fp_rate: ", float64(falsePositives)/float64(len(dataset)),
 			"fp_rate_perc: ", 100*float64(falsePositives)/float64(len(dataset)))
 		// fmt.Println(100 * (float64(falsePositives) / float64(len(dataset))))
 	}
